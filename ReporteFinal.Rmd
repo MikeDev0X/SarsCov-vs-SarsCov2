@@ -1,0 +1,342 @@
+---
+title: "Comparación entre SARS-CoV  y SARS-CoV-2"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Proyecto Integrador
+
+### Análisis de biología computacional BT1013.1
+
+### Profesor Sergio Francisco Hernández Alamilla
+
+
+## Este proyecto está hecho por:
+
+![Marco Antonio Gardida Cortés A01423221](MARCO.png){width=107px}
+
+
+![Miguel Jiménez Padila A01423189](MIKE.png){width=107px}
+
+
+![Silvio Emmanuel Prieto Caro A01423341](EMMA.png){width=107px}
+
+# Introducción
+
+En 2002 ocurrieron los primeros brotes de la enfermedad que hoy conocemos como SARS, provocada por una especie de coronavirus que apareció en China, y que fue contenida rápidamente a pesar de la severidad de sus síntomas. Aun así, se pudo esparcir por el mundo durante un par de meses.
+Recientemente ha aparecido otra enfermedad llamada COVID-19, la cual se ha propagado con mucha más libertad, habiendo al dia de hoy más de 140 millones de casos a nivel global. Esta también es provocada por un coronavirus, pero con algunas diferencias en su propagación y severidad, siendo extremadamente contagiosa pero con síntomas en la mayoría de los casos leves o a veces inexistentes, en contraste con el SARS, el cual es más difícil de contagiar pero el contraerla usualmente requiere atención médica urgente. 
+A pesar de estas diferencias, comparten cierta sintomatología entre ellos, siendo la fiebre alta, tos seca y dificultad para respirar características de ambas, con los casos más graves de COVID-19 presentando toda clase de síntomas adicionales a los anteriormente mencionados, y dejando secuelas más graves en el paciente. 
+Sabiendo que ambos virus pertenecen a la misma familia, el coronavirus, y que algunos de sus síntomas son idénticos, podemos llegar a creer que ambos podrían ser estructuralmente semejantes entre sí, o incluso que uno haya evolucionado del otro. Esta analogía será el tema que se discutirá en este reporte.
+
+# Contexto
+
+
+## Situación Actual del COVID-19 a nivel mundial, en México, en Morelos y en Jojutla. 
+
+A nivel global, la situación ha mejorado progresivamente desde que comenzó la
+distribución de las vacunas. Países que solían ser centros de la infección continúan
+disminuyendo su número de casos diarios confirmados, con Estados Unidos y Reino
+Unido siendo dos de los más notorios. Actualmente Francia, Polonia, Turquía,
+Suecia y Hungría tienen una alta cifra de casos nuevos por cada millón de
+habitantes, estando en el rango de los 500 a 1,000.
+Situación a nivel global:
+Casos globales acumulados: 142,596,145
+Casos activos: 57,892,802
+Defunciones: 3,040,351
+Recuperados: 81,662,992
+De acuerdo con las estadísticas del Gobierno, la situación en México el número de
+casos confirmados está disminuyendo paulatinamente, siendo la cifra al 19 de abril
+de 1857 casos. Las estadísticas de la Universidad Johns Hopkins muestran un
+promedio de 27.78 casos confirmados por cada millón de habitantes. Actualmente
+existen 8 estados que se encuentran en semáforo epidemiológico verde.
+
+Situacion en Mexico:
+Casos nacionales acumulados: 2,311,172
+Casos activos: 24,117
+Defunciones: 213,048
+Recuperados: 1,836,377
+
+Situación local (Jojutla, Morelos):
+Casos acumulados: 1,106
+Casos activos: 10
+Defunciones: 104
+Recuperados: 848
+
+
+## Primer Variante que se propagó a todo el mundo
+A finales de enero o principios de febrero de 2020 apareció una variante del
+SARS-CoV-2 con una sustitución D614G en el gen que codifica su proteína S. En el
+transcurso varios meses, acabó sustituyendo al virus inicial detectado en China y, en
+Instituto Tecnológico y de Estudios Superiores de Monterrey
+junio de 2020, se convirtió la variante preponderante en todo el mundo.
+Esta fue la primera variante del virus que se propagó al mundo. 
+
+
+## Otras variantes del virus que existen en el mundo
+
+En agosto y septiembre de 2020 se identificó en Dinamarca una variante del
+SARS-CoV-2 que se o transmitía entre visones de granja y, posteriormente, al ser
+humano. Por ahora está controlada esta variante.
+14 de diciembre de 2020, las autoridades del Reino Unido notificaron a la OMS una
+variante, que designaron como SARS-CoV-2 VOC 202012/01, esta variante se ha
+esparcido de manera rápida debido a que ocasiona una carga viral mayor.
+Otra variante más reciente y que sigue siendo estudiada es la brasileña, que
+además de más contagiosa, también puede infectar a personas que ya tuvieron la
+enfermedad.
+
+
+# Hipótesis
+
+El genoma de un virus, al igual que el de cualquier otro ser vivo, cambia a través del tiempo dependiendo de las necesidades específicas del mismo, y de lo que ayuda a una especie a sobrevivir. Llega el momento en el que ocurren tantas mutaciones, que pueden generarse ramas distintas de un ancestro común, todas pertenecientes a la misma familia. 
+Creemos que lo anterior es el caso con el virus que provocó la pandemia de SARS del 2002, y que los cambios en el genoma de este resultaron en el surgimiento de un virus perteneciente a la misma familia, pero que se comporta diferente en cuanto a sintomatología y severidad de la infección. 
+Si este es el caso, debe existir una similitud contundente entre los virus SARS CoV 1 y el SARS CoV 2, lo cual buscamos comprobar comparando los primeros genomas registrados de ambos ejemplares, y demostrar así que a pesar de las mutaciones  y la evolución, ambos continúan siendo idénticos hasta cierto punto.
+
+
+# Procesamiento de datos
+
+
+## Pasos Iniciales
+
+Como primer paso, importamos la librería "seqinr" que sirve para leer archivos de texto, en este caso nos ayudó a leer las dos secuencias de codificación del SARS-CoV y SARS-CoV-2 y las guardamos en variables para poder trabajar con ellas. Además en algún punto del código ocupamos hacer una traducción de un codón a un aminoácido, para eso pusimos la traducción de los codones, es decir teníamos el valor de cada codón para cada aminoácido, en otro código aparte que incluímos. 
+```{r Inicio}
+library(seqinr)
+source("MyFunctions.R")
+sars1= read.fasta("SARSCOV1.txt")
+sars2 = read.fasta("SARSCOV2.txt")
+```
+
+
+## Extracción de nombres de genes de SARS-CoV y SARS-CoV-2
+
+Lo primero que queríamos observar es qué genes tiene cada uno, porque es en lo que nos vamos enfocar, pero para eso teníamos que acceder a la anotación de cada gen y sacar el nombre del gen.
+Nota: En el gen 14 del SARS-CoV no se encontraba escrito el nombre del gen como "gene", sino que se encontraba con otro nombre. El detalle es que de cambiar eso, los otros genes no saldrían, entonces buscamos el gen 14 y lo agregamos manualmente.  
+```{r Extracción nombres de genes}
+attr1 = c()
+attr2 = c()
+for(x in seq_along(sars1) ){
+  if(x==14){
+    attr1=c(attr1,"ORF9b")
+  }
+  gen1 = toupper(sars1[[x]])
+  gen1[gen1=="T"] = "U"
+  xd = attr(gen1,"Annot")
+  sep = unlist(strsplit(xd, "\\[|\\]|:|="));
+  gen = sep[which(sep=="gene")+1]
+  attr1 = c(attr1,gen)
+}
+for(y in seq_along(sars2) ){
+  gen2 = toupper(sars2[[y]])
+  gen2[gen2=="T"] = "U"
+  xd = attr(gen2,"Annot")
+  sep = unlist(strsplit(xd, "\\[|\\]|:|="))
+  gen = sep[which(sep=="gene")+1]
+  attr2 = c(attr2,gen)
+
+}
+```
+Los genes del SARS-CoV SON: 
+
+```{r Genes SARS-CoV, echo=FALSE}
+attr1
+```
+
+Los genes del SARS-CoV-2 SON:
+```{r Genes SARS-CoV-2, echo=FALSE}
+attr2
+```
+
+
+## Genes en común entre SARS-CoV y SARS-CoV-2
+
+Después de haber checado los genes, hicimos un análisis visual de las similitudes en genes y agregamos a dos listas respectivamente los genes similares. 
+```{r Gen Parecido, warning=FALSE}
+GENPARECIDO1 = list(sars1[[1]],sars1[[2]],sars1[[3]],sars1[[4]],sars1[[6]],sars1[[7]],sars1[[8]],sars1[[9]],sars1[[10]],sars1[[13]])
+GENPARECIDO2 = list(sars2[[1]],sars2[[2]],sars2[[3]],sars2[[4]],sars2[[5]],sars2[[6]],sars2[[7]],sars2[[8]],sars2[[9]],sars2[[11]])
+```
+El número de genes parecidos entre el SARS-Cov y SARS-CoV-2  es: `r length(GENPARECIDO1)`
+
+Los Genes en común son: 
+```{r Genes en común(Name), echo=FALSE}
+attr3= c()
+for(x in seq_along(GENPARECIDO1)){
+  gen1 = toupper(GENPARECIDO1[[x]])
+  xd = attr(gen1,"Annot")
+  sep = unlist(strsplit(xd, "\\[|\\]|:|="));
+  gen = sep[which(sep=="gene")+1]
+  attr3 = c(attr3,gen)
+}
+attr3
+```
+
+
+## Diferencias entre nucleótidos dentro de los genes en común.
+
+Ya teniendo los genes en común en una lista, el siguiente paso es analizar los cambios que había en nucleótidos y en  aminoácidos dentro de los genes en común entre ambos. A parte queríamos agregarlo a una tabla, en este caso un data frame para que se visualizara mejor y pudiéramos hacer algo después con eso. 
+Nuestro data frame se ve compuesto por 4 columnas:
+
+SNP: Representaría el cambio de nucleótido único
+
+Position: En qué posición se encontró dicho cambio
+
+Amino: Representa si dicho cambio de nucleótido tuvo un cambio en el aminoácido resultante
+
+Gen: Representa el gen en el que se encuentra el cambio.
+
+Primero hicimos algo inicial como es cambiar todo a mayúsculas para mayor practicidad y para las T´s a U´s en ambos.
+
+Después se hizo algo similar a lo anterior, para sacar el nombre del gen.
+
+El siguiente paso es uno importante para que funcione y que hasta cierto punto complicó el funcionamiento del programa. El objetivo de esta sección de código es sacar las diferencias en nucleótidos, para eso en algún punto usamos la función which(GP1 != GP2), pero para que eso funcione se necesita que el tamaño de lo que se va a comparar sea el mismo y en este caso no siempre es el mismo, hay casos donde un gen es más largo que otro y viceversa, para eso lo que hicimos es restarle ese exceso de largo al que lo tuviera. 
+
+Luego de eso, pudimos sacar las diferencias y las metimos al data frame.
+Además agregamos el cambio de aminoácido, si es que había uno, el gen en donde se encuentra dicho cambio y la posición al dataframe. 
+```{r Realización del DataFrame}
+df = data.frame(
+  SNP = character(),
+  Position = numeric(),
+  Amino = character(),
+  Gen = character()
+)
+
+for(i in seq_along(GENPARECIDO1)){
+  GP1 = toupper(GENPARECIDO1[[i]])
+  GP2 = toupper(GENPARECIDO2[[i]])
+  GP1[GP1=="T"] = "U"
+  GP2[GP2=="T"] = "U"
+  
+  Anot1 = attr(GP1,"Annot") 
+  sep = unlist(strsplit(Anot1, "\\[|\\]|:|="));
+  gen = sep[which(sep=="gene")+1]
+  
+  if(length(GP1) >  length(GP2)){
+    GP1 = GP1[-c(length(GP2):length(GP1)+1)]
+  }
+  else if(length(GP2) >  length(GP1)){
+    GP2 = GP2[-c(length(GP1):length(GP2)+1)]
+  }
+  
+    diferentes = which(GP1 != GP2);
+    for(k in diferentes){
+      SNP = paste(GP1[k],"to",GP2[k])
+      #       C  U  G U  A  G
+      #k      1  2  3 4  5  6
+      #ajuste 0 -1 -2 0 -1 -2
+      ajuste =(k-1) %% 3
+      codon1 = paste(GP1[k-ajuste],GP1[k+1-ajuste],GP1[k+2-ajuste],sep="")
+      codon2 = paste(GP2[k-ajuste],GP2[k+1-ajuste],GP2[k+2-ajuste],sep="")
+      aminoChange = paste(trad[codon1],"to",trad[codon2],sep="")
+      
+      newRow = list(SNP,k,aminoChange,gen)
+      df[nrow(df)+1,]=newRow 
+    }
+}
+```
+
+
+# Resultados
+
+
+## Dataframe final
+
+Este es el dataframe final en donde se fueron introduciendo los cambios en nucleótido único y lo que representaba dicho cambio en los genes similares. 
+
+Tabla de Polimorfismo de nucleótido único(SNP)
+```{r DataFrame, echo=FALSE}
+df
+```
+
+
+
+
+## Gráfico de la frecuencia de SNP´s en cada gen similar. 
+Después de crear un data frame con los datos que necesitamos para obtener nuestras conclusiones , decidimos hacer un análisis visual más objetivo por medio de una gráfica; Para esto utilizamos la librería "ggplot2", con la cual podremos realizar una gráfica con los datos obtenidos en nuestro data frame.
+
+
+Primeramente, asignamos la palabra reservada "ggplot" a una variable, indicándole la tabla de valores que queremos  graficar, en este caso, nuestro data frame. Posteriormente le sumamos la función de estética "aes" a nuestra variable, diciéndole que nuestro eje x va a situar los datos de los SNP de nuestro data frame, e indicamos que se trata de una gráfica de barras con la palabra "fill". Procedemos a utilizar "ggtitle" para ponerle un título a nuestra gráfica de barras y después le ponemos los labels en los ejes x y con la función "labs". A continuación definimos la barra a partir de la función que queramos, en este caso queremos iterar para obtener una frecuencia acumulada, por lo cual utilizamos la función "geom_bar" y la palabra reservada stat="count". Después de esto utilizamos la función de "facet grid", la cual dividirá la gráfica en segmentos, los cuales serán los genes. De esta manera, tendremos hasta el momento una gráfica en donde se muestran los genes como secciones, y en cada sección se muestran sus respectivos SNPs. Para finalizar, agregamos un tema con la función "theme_grey", y eliminamos el texto y los ticks en el axis x para que no se vea el texto de los SNPs encimado, y podremos utilizar la simbología que está en el lado derecho para que quede una representación gráfica limpia.
+
+
+```{r Graficación, echo=FALSE, warning=FALSE}
+library("ggplot2")
+p = ggplot(df)
+p = p + aes(x=SNP, fill=SNP)
+p = p + ggtitle("Frecuencia de SNP") + labs(x="SNP",y="Frecuencia", fill="SNP")
+p = p + geom_bar(stat="count")
+p = p + facet_grid(~Gen)
+p = p + theme_grey()
+p= p + theme(
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank())
+p
+```
+
+
+# Análisis de resultados
+
+
+## Genes Similares
+
+Observando los resultados que arroja el programa, podemos ver que la mayoría de los genes que tienen ambas muestras en común no muestran cambios importantes en su estructura. Podemos observar, sin embargo, que hay dos genes dentro de ambos que muestran cambios significativos. El primero de ellos es ORF 1 ab, conformado por dos poliproteínas, las cuales contienen las instrucciones para codificar 16 proteínas no estructurales que conforman el virus. En el virus, las proteínas no estructurales se encargan de funciones tales como ensamblaje, transcripción, replicación y control sobre las funciones del organismo huésped. 
+Al comparar el mismo segmento de este gen para ambos virus, se encontró que existen 22506 mutaciones, el mayor número de cambios que existe en cualquiera de los genes. Con base a las funciones que cumple dentro del virus, se puede inferir que todos los cambios que han ocurrido dentro de este gen están relacionados a la infectividad y a la mayor severidad de la infección del SARS CoV 2 comparado con el SARS CoV 1, así también podría explicar algunos de los síntomas adicionales que posee el primero.  Cabe destacar que el ORF1ab del SARS 1 es más largo que el de SARS 2 por al menos 200 nucleótidos. Al cumplir con la misma función de manera más efectiva y utilizando un código más corto, se puede decir que el SARS 2 en comparación con el SARS 1, ha evolucionado para ser más eficiente en las funciones anteriormente mencionadas, incluyendo replicación y control sobre el organismo huésped.
+
+El segundo gen que presenta cambios importantes es el ‘S’ o Spike, con un numero total de mutaciones de 2737. La cantidad de cambios ocurridos en la estructura de esta proteína sugiere que también es preponderante en la forma en la que el virus propaga su infección por el cuerpo. 
+Este grupo de genes es el encargado de permitir al virus unirse a los receptores de la célula huésped. Otra de sus funciones principales es inhibir la producción de proteínas que regulan la respuesta antiviral del organismo, facilitando aún más su entrada. 
+Al comparar la facilidad con la que ambos virus pueden propagarse dentro del cuerpo, es evidente que la evolución que ha tenido la proteína ayuda al virus a insertarse con mas facilidad a las células del huésped, y aun mas importante, a eliminar la respuesta inmune del paciente con mayor facilidad. Esto se puede ver principalmente en el periodo de incubación de ambos ejemplares, pues el SARS 2 puede estar 14 días o mas dentro del cuerpo sin generar una respuesta inmune, mientras que el máximo registrado para el SARS 1 es de 7 días.
+
+El gen M, que aunque no tiene tantas mutaciones como los otros dos anteriores, también surge un pequeño cambio. Este gen es una proteína estructural para la membrana  y que es responsable del transporte transmembrana de nutrientes, liberación de la partícula viral y la formación de su envoltura. En este caso no hay tanta diferencia con respecto a este gen porque solo hay un gen de estos y las diferencias no hacen que cambios enormes con respecto al nuevo Sars-CoV-2.
+
+El gen N conforma la nucleocápside helicoidal del virus, esto se refiere a una pequeña proteína o membrana que envuelve el código genético del virus y además puede ayudar en otras funciones como la replicación y la transcripción del mismo. En nuestro primer genoma del Sars-Cov podemos observar que esta proteína está repetida dos veces en dos posiciones diferentes del genoma, y esto se debe a que la proteína N tiene dos regiones en la célula del virus, cada una para las funciones descritas anteriormente, es decir, una proteína se encarga de cubrir el código genético del virus, mientras que la otra se encarga de adherirse con otras proteínas para el transporte del código genético a otras regiones del virus. Por otro lado, en el grupo Sars-Cov-2, se puede observar que solamente se contiene un gen N en todo el virus. Nuestra especulación es que la mutación que ocurrió en el Sars-Cov hizo que únicamente se necesitara una de estas proteínas en el virus para tener más eficiencia; la manera en la que planteamos esta hipótesis es que en el Sars-Cov las dos proteínas N tienen tamaños muy distintos entre sí siendo una mucho más grande que la otra, y cuando visualizamos el tamaño del gen N en Sars-Cov-2, nos dimos cuenta que era de un tamaño parecido al máximo del Sars-Cov, por lo cual concluímos que una de las grandes mutaciones características entre ambas familias es la optimización de estas proteínas a tal grado de necesitar únicamente 1 para el Sars-Cov-2.
+
+El gen ORF3a que acorde a distintos estudios es el encargado de ocasionar apoptosis(muerte celular) en el Sars-CoV y en este caso el Sars-CoV-2 también contiene ese mismo gen. Acorde a nuestros resultados, hay una pequeña diferencia de SNP en este gen, por ende se intuiría que este gen no actuaría de la misma forma. Basándanos en estudios, afirman que el gen ORF3a causa ese mismo síntoma pero es menos letal, lo cual hace sentido ya que el Sars-CoV  es más mortal que el Sars-CoV-2.
+
+La proteína E es la más pequeña del coronavirus y se encarga de envolver pequeñas partes del virus, además de ayudar al ensamblaje de los viriones o genomas; además, los viriones pueden contener enzimas o proteínas que facilitan la primera replicación en una célula huesped. En los genomas tanto del Sars-Cov como del Sars-Cov-2, se puede observar que esta proteína está presente y es por eso que en ambos casos el periodo de incubación del virus en el ser humano es casi nulo, independientemente de los síntomas u otras características.
+
+Lo que hace la proteína 0RF6, es  anular las señales de auxilio que la célula infectada lanza al sistema inmune para que la pueda ayudar. Esta proteína es un clásico cuando se trata de un virus y no hay cambios notorios con respecto al SARS-CoV, así como vemos en el gráfico que hay cambios casi nulos. 
+
+La proteína ORF7a tiene como propósito interferir con los leucocitos y otros antígenos en el organismo humano por medio de la glucosilación, la cual se refiere al medio por el cual se conectan dos células, por lo tanto, los antígenos de nuestro organismo no pueden llevar a cabo su propósito antiviral con eficacia, lo cual beneficia al virus y el tiempo en el que se propaga por todo el organismo. Tanto en el Sars-Cov como en el Sars-Cov2 se encuentra presente esta proteína, por lo cual la eficacia de los antígenos en la sangre del huesped se verán afectados. De hecho, en el Sars-Cov esta proteína actuaba aún más letal que en el actual Sars-Cov-2, pues la versión del virus actual es más infecciosa pero menos letal.
+
+La proteína ORF7b que simplementa es un proteína que ayuda y que causa diversos síntomas como arritmias cardíacas, pérdida de olor, disminución de la absorción de oxígeno y problemas intestinales, hasta insuficiencia multiorgánica. Ambas proteínas son similares acorde a estudios y al igual que los resultados, el cambio entre ellos es mínimo. 
+
+
+## Genes diferentes
+
+El análisis anterior va de la mano con los genes similares, pero no nos podíamos olvidar de aquellos genes que no comparten como tal pero que si analizamos de cerca su función, son muy parecidos. 
+
+Los genes diferentes del SARS-CoV son ORF8a, ORF8b, ORF3b, ORF9b, que muy general sus objetivos son desactivar el sistema inmune, al engañar ciertas proteínas encargadas de atacar entes extraños en la sangre, como ciertos antígenos. Lo interesante de esto es que hay varias proteínas encargadas de esto en el SARS-CoV, lo cual podría significar que este es más agresivo. Por el contexto que hay, en un inicio, la ORF8a y ORF8b estaban combinadas en un solo ORF8 en el SARS-COV, algo muy parecido al actual coronavirus. 
+
+Por otro lado los genes diferentes son el ORF8 y el ORF10. El ORF8 es encargado de desactivar al sistema inmune y desafortunadamente el ORF10 sigue en estudios y no se determina aún un uso concreto. 
+
+Como se observa, realmente son bastante parecidos en los genes diferentes, los genes que no comparten tienen una función similar y lo que diríamos que cambia es que en uno hay más que otro, lo cual podría significar que uno es más agresivo que otro. 
+
+
+# Conclusión Final
+
+El virus ha presentado cambios en genes relacionados con el incremento de su infectividad y supresión de respuestas inmunes, asi como también a su resistencia en general. 
+Tenemos como prueba de lo anterior a los genes ORF1ab, S y N. Podemos observar, por ejemplo, que un cambio en el gen N resulta en que el virus sea mas resistente a su medio ambiente, sin mencionar que el SARS 2 utiliza solo uno de estos para almacenar tanto su material genético como servir para acoplar los receptores, en lugar de tener uno para cada cosa, cosas que demuestran que el virus se ha vuelto mas eficiente en como interactúa con sus alrededores. La evolución en el gen Spike también implica una mejora, específicamente para acoplarse a los receptores del huésped y permitir la propagación con mayor facilidad.
+De la misma forma, tanto Spike como ORF1ab ayudan a reducir la respuesta inmune del huésped y facilitar el proceso de infección, sin mencionar que el ORF1ab, el gen con más cambios en el virus es intermediario en otras funciones vitales del virus, tales como ensamblaje y replicación, las cuales han demostrado ser mas efectivas en el SARS 2 en comparación con su ancestro.
+
+Por otra parte, las mutaciones también implican cambios en el comportamiento general del virus. Esto referente al hecho de que el SARS 1 es más agresivo en comparación a su descendiente, teniendo un periodo de incubación corto y una tasa de mortalidad mayor, en contraste con el SARS 2, el cual puede mantenerse sin ser detectado en el cuerpo por días, y tardar aún más en ser neutralizado por el cuerpo, además de tener una tasa de mortalidad reducida.
+Despues de haber realizado las pruebas necesarias y de proporcionar una interpretación a los resultados observados, corroboramos que las mutaciones ocurridas como resultado de la evolución del SARS CoV 1 tuvieron un impacto contundente en como se desarrolla el cuadro de SARS CoV 2, tanto en sintomatología como en transmisibilidad y severidad. Ademas de esto, pudimos observar que ambos virus son muy parecidos estructuralmente hablando; esto combinado con la sintomatología similar nos pemite confirmar que en efecto existe un parentesco entre ambos. 
+
+
+# Referencias
+
+Lucía V. Cavallaro. (2020). INFORME SARS COV-2. 27/04/2021, de Sociedad Argentina de Virología Sitio web: https://aam.org.ar/src/img_up/22032020.0.pdf
+
+Yujie Ren, Ting Shu, Di Wu, Jingfang Mu, Chong Wang, Muhan Huang, Yang Han, Xue-Yi Zhang, Wei Zhou, Yang Qiu. (2020). The ORF3a protein of SARS-CoV-2 induces apoptosis in cells. 27/04/2021, de Cellular & Molecular Immunology Sitio web: https://www.nature.com/articles/s41423-020-0485-9
+
+Sk. Sarif Hassana,∗ , Atanu Moitrab , Pabitra Pal Choudhuryc , Prasanta Pramanikd , Siddhartha Sankar Jana. (2020). Some findings on genes over SARS-CoV2 genomes. 27/08/2020, de Preprints Sitio web: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwiUxJz_p6LwAhVNRKwKHYfLBuEQFjAHegQIBxAD&url=https%3A%2F%2Fwww.preprints.org%2Fmanuscript%2F202004.0405%2Fv2%2Fdownload&usg=AOvVaw1T35tdsu4ptM9U7j7ftqVX
+
+Thomas G. Flower, Cosmo Z. Buffalo, Richard M. Hooy, Marc Allaire, Xuefeng Ren, James H. Hurley. (2020). Structure of SARS-CoV-2 ORF8, a rapidly evolving immune evasion protein. 28/04/2021, de PNAS Sitio web: https://www.pnas.org/content/118/2/e2021785118#:~:text=.%2C%20The%20ORF8%20protein%20of%20SARS,through%20potently%20downregulating%20MHC-I.
+
+Sk Sarif Hassan, Pabitra Pal Choudhury. (2020). Notable sequence homology of the ORF10 protein introspects the architecture of SARS-COV-2. 27/04/21, de ResearchGate Sitio web: https://www.researchgate.net/publication/344151278_Notable_sequence_homology_of_the_ORF10_protein_introspects_the_architecture_of_SARS-COV-2
+
+Connect E. (2021). Virología. Estructura del virión, la partícula vírica. 27/04/2021, de ELSEVIER Sitio web: https://www.elsevier.com/es-es/connect/medicina/edu-virologia-estructura-del-virion-particula-virica
+
+Yoshimoto K. F. (2020). The Proteins of Severe Acute Respiratory Syndrome Coronavirus-2 (SARS CoV-2 or n-COV19), the Cause of COVID-19. 27/04/2021, de SpringerLink Sitio web: https://link.springer.com/article/10.1007/s10930-020-09901-4
+
+Cao Z. Xia H. Rajsbaum R. Xia X. Wang H. Shi P. (2021). Ubiquitination of SARS-CoV-2 ORF7a promotes antagonism of interferon response. 27/04/2021, de natureportfolio Sitio web: https://www.nature.com/articles/s41423-020-00603-6
+
+N.A. (2003). UniProtKB - P59635 (NS7A_SARS). 27/04/2021, de UniProt Sitio web: https://www.uniprot.org/uniprot/P59635
+
+N.A. (2020). UniProtKB - P0DTD2 (ORF9B_SARS2). 27/04/2021, de UniProt Sitio web: https://www.uniprot.org/uniprot/P0DTD2

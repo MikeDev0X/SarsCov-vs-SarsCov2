@@ -1,0 +1,113 @@
+library(seqinr)
+source("MyFunctions.R")
+sars1= read.fasta("SARSCOV1.txt")
+sars2 = read.fasta("SARSCOV2.txt")
+##############################
+attr1 = c()
+attr2 = c()
+for(x in seq_along(sars1) ){
+  if(x==14){
+    attr1=c(attr1,"ORF9b")
+  }
+  gen1 = toupper(sars1[[x]])
+  gen1[gen1=="T"] = "U"
+  xd = attr(gen1,"Annot")
+  sep = unlist(strsplit(xd, "\\[|\\]|:|="));
+  gen = sep[which(sep=="gene")+1]
+  attr1 = c(attr1,gen)
+}
+for(y in seq_along(sars2) ){
+  gen2 = toupper(sars2[[y]])
+  gen2[gen2=="T"] = "U"
+  xd = attr(gen2,"Annot")
+  sep = unlist(strsplit(xd, "\\[|\\]|:|="))
+  gen = sep[which(sep=="gene")+1]
+  attr2 = c(attr2,gen)
+
+}
+attr1
+attr2
+####################################
+GENPARECIDO1 = list(sars1[[1]],sars1[[2]],sars1[[3]],sars1[[4]],sars1[[6]],sars1[[7]],sars1[[8]],sars1[[9]],sars1[[10]],sars1[[13]])
+GENPARECIDO2 = list(sars2[[1]],sars2[[2]],sars2[[3]],sars2[[4]],sars2[[5]],sars2[[6]],sars2[[7]],sars2[[8]],sars2[[9]],sars2[[11]])
+
+length(sars1[[13]])
+length(sars1[[15]])
+length(sars2[[11]])
+
+
+
+attr3= c()
+for(x in seq_along(GENPARECIDO1)){
+  gen1 = toupper(GENPARECIDO1[[x]])
+  xd = attr(gen1,"Annot")
+  sep = unlist(strsplit(xd, "\\[|\\]|:|="));
+  gen = sep[which(sep=="gene")+1]
+  attr3 = c(attr3,gen)
+}
+attr3
+
+cuenta = 0
+for (i in(1:10)){
+  print(GENPARECIDO1[i])
+}
+
+#####################################################################
+df = data.frame(
+  SNP = character(),
+  Position = numeric(),
+  Amino = character(),
+  Gen = character()
+)
+
+for(i in seq_along(GENPARECIDO1)){
+  GP1 = toupper(GENPARECIDO1[[i]])
+  GP2 = toupper(GENPARECIDO2[[i]])
+  GP1[GP1=="T"] = "U"
+  GP2[GP2=="T"] = "U"
+  
+  Anot1 = attr(GP1,"Annot") 
+  sep = unlist(strsplit(Anot1, "\\[|\\]|:|="));
+  gen = sep[which(sep=="gene")+1]
+  
+  if(length(GP1) >  length(GP2)){
+    GP1 = GP1[-c(length(GP2):length(GP1)+1)]
+  }
+  else if(length(GP2) >  length(GP1)){
+    GP2 = GP2[-c(length(GP1):length(GP2)+1)]
+  }
+  
+    diferentes = which(GP1 != GP2);# print(diferentes)
+    for(k in diferentes){
+      SNP = paste(GP1[k],"to",GP2[k])
+      #       C  U  G U  A  G
+      #k      1  2  3 4  5  6
+      #ajuste 0 -1 -2 0 -1 -2
+      ajuste =(k-1) %% 3
+      codon1 = paste(GP1[k-ajuste],GP1[k+1-ajuste],GP1[k+2-ajuste],sep="")
+      codon2 = paste(GP2[k-ajuste],GP2[k+1-ajuste],GP2[k+2-ajuste],sep="")
+      aminoChange = paste(trad[codon1],"to",trad[codon2],sep="")
+      if(gen == "N"){
+        cuenta = cuenta + 1 
+      }
+      
+      newRow = list(SNP,k,aminoChange,gen)
+      df[nrow(df)+1,]=newRow 
+    }
+}
+###################################################################
+df
+##########################################################
+library("ggplot2")
+p = ggplot(df)
+p = p + aes(x=SNP, fill=SNP)
+p = p + ggtitle("Frecuencia de SNP") + labs(x="SNP",y="Frecuencia", fill="SNP")
+p = p + geom_bar(stat="count")
+p = p + facet_grid(~Gen)
+p = p + theme_grey()
+p= p + theme(
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank())
+p
+
+
